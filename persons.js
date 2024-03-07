@@ -1,4 +1,4 @@
-export default [
+const persons = [
   {
     "id": 1,
     "name": "Arto Hellas",
@@ -25,8 +25,8 @@ export default [
     "number": "39-23-6423122"
   },
   {
-    "name": "Ade Kunle",
-    "number": "08060540474",
+    "name": "Akin Wasiu",
+    "number": "09060540474",
     "id": 6
   }
-];
+]; module.exports = persons;

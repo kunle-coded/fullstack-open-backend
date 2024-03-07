@@ -1,6 +1,6 @@
-// import fs from "fs";
-import fs from "fs/promises"; // Using fs.promises for asynchronous file operations
-import persons from "../persons.js";
+const fs = require("fs/promises");
+const path = require("path");
+const persons = require("./persons.js");
 
 const currentDate = new Date();
 const formattedDate = currentDate.toLocaleString("en-US", {
@@ -16,8 +16,7 @@ const formattedDate = currentDate.toLocaleString("en-US", {
 
 // Function to delete an item from the array
 
-const filePath =
-  "/Users/kunleadesokan/WebDev/FullstackOpen/backend/Part3/persons.js";
+const filePath = path.join(__dirname, "persons.js");
 
 // Function to delete an item from the array
 const deleteItem = async (itemId) => {
@@ -32,7 +31,12 @@ const deleteItem = async (itemId) => {
       // Write the updated array back to the file
       await fs.writeFile(
         filePath,
-        `export default ${JSON.stringify(persons, null, 2)};`,
+        `const persons = ${JSON.stringify(
+          persons,
+          null,
+          2
+        )}; module.exports = persons;
+        `,
         "utf8"
       );
     } else {
@@ -57,7 +61,11 @@ const addItem = async (data) => {
     // Write the updated array back to the file
     await fs.writeFile(
       filePath,
-      `export default ${JSON.stringify(persons, null, 2)};`,
+      `const persons = ${JSON.stringify(
+        persons,
+        null,
+        2
+      )}; module.exports = persons;`,
       "utf8"
     );
   } catch (error) {
@@ -71,4 +79,4 @@ const generateId = () => {
   return maxId;
 };
 
-export { formattedDate, deleteItem, addItem };
+module.exports = { formattedDate, deleteItem, addItem };
