@@ -1,13 +1,15 @@
 const express = require("express");
 const morgan = require("morgan");
+const cors = require("cors");
 const persons = require("./persons.js");
 const { formattedDate, deleteItem, addItem } = require("./helpers.js");
 
 const app = express();
 
 app.use(express.json());
+app.use(express.static("dist"));
 
-// app.use(morgan("tiny"));
+app.use(cors());
 
 app.use(
   morgan((tokens, req, res) => {
