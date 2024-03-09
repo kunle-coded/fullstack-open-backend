@@ -65,17 +65,27 @@ app.put("/api/persons/:id", (req, res) => {
     return res.status(400).end();
   }
 
-  Person.findByIdAndUpdate(req.params.id, newNumber, { new: true }).then(
-    (person) => {
-      res.status(201).json(person);
-    }
-  );
+  Person.findByIdAndUpdate(req.params.id, newNumber, {
+    new: true,
+    runValidators: true,
+    context: "query",
+  }).then((person) => {
+    res.status(201).json(person);
+  });
 });
 
-app.post("/api/persons", async (req, res) => {
+app.post("/api/persons", async (req, res, next) => {
   try {
-    if (req.body === undefined) {
-      return res.status(400).end();
+    if (req.body.name === "") {
+      return res.status(400).json({ error: "name missing" });
+    }
+
+    const isValidNum = req.body.number.includes("-");
+    const numPartOne = req.body.number.split("-")[0];
+    const validNum = numPartOne.length >= 2 && numPartOne.length <= 4;
+
+    if (!isValidNum || !validNum) {
+      return res.status(400).json({ error: "Invalid number format" });
     }
 
     const persons = await Person.find({});
@@ -96,8 +106,7 @@ app.post("/api/persons", async (req, res) => {
     const savedPerson = await newPerson.save();
     res.status(201).json(savedPerson);
   } catch (error) {
-    console.error("Error in POST /api/persons:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    return next(error);
   }
 });
 
@@ -113,6 +122,8 @@ const errorHandler = (error, request, response, next) => {
 
   if (error.name === "CastError") {
     return response.status(400).send({ error: "malformatted id" });
+  } else if (error.name === "ValidationError") {
+    return response.status(400).json({ error: error.message });
   }
 
   next(error);
