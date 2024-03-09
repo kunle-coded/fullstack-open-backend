@@ -3,9 +3,7 @@ const morgan = require("morgan");
 const cors = require("cors");
 const dotenv = require("dotenv");
 dotenv.config();
-const mongoose = require("mongoose");
 const Person = require("./person.js");
-const { formattedDate, deleteItem, addItem } = require("./helpers.js");
 
 const app = express();
 
@@ -49,7 +47,7 @@ app.get("/api/persons/:id", (req, res, next) => {
 
 app.delete("/api/persons/:id", (req, res, next) => {
   Person.findByIdAndDelete(req.params.id)
-    .then((person) => {
+    .then(() => {
       res.status(204).end();
     })
     .catch((error) => next(error));
